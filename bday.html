@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday Sarah 🎀</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Sniglet:wght@800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #fef8f4 0%, #fff0f3 50%, #fdf5eb 100%);
+      font-family: 'Fredoka', cursive, sans-serif;
+      color: #532c1d;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* Subtle Polka Dot Texture Background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image: 
+        radial-gradient(#f7d2dc 1.2px, transparent 1.2px),
+        radial-gradient(#f7d2dc 1.2px, transparent 1.2px);
+      background-size: 28px 28px;
+      background-position: 0 0, 14px 14px;
+      opacity: 0.65;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Ambient Floating Party Emojis (Cows, Cakes, Balloons, Bows) */
+    .bg-floater {
+      position: fixed;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0.65;
+      animation: floatAmbient 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatAmbient {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-16px) rotate(8deg); }
+      100% { transform: translateY(0px) rotate(-6deg); }
+    }
+
+    /* Main Centerpiece Stage */
+    .portal-container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 660px;
+      padding: 30px 20px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    /* Grand Main Title */
+    .main-title {
+      font-family: 'Sniglet', cursive;
+      font-size: clamp(36px, 6.5vw, 52px);
+      color: #e6426d;
+      margin-bottom: 8px;
+      text-shadow: 3px 3px 0px #ffe1e8, 0 8px 24px rgba(230, 66, 109, 0.18);
+      line-height: 1.15;
+    }
+
+    /* Centerpiece Birthday Cake */
+    .cake-showcase {
+      position: relative;
+      width: min(300px, 68vw);
+      aspect-ratio: 1 / 1;
+      margin: 10px auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .cake-showcase img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 16px 34px rgba(220, 80, 110, 0.28));
+      animation: floatMainCake 4s ease-in-out infinite alternate;
+      transition: transform 0.25s ease;
+    }
+
+    .cake-showcase:hover img {
+      transform: scale(1.06) rotate(1.5deg);
+    }
+
+    .cake-showcase:active img {
+      transform: scale(0.95);
+    }
+
+    @keyframes floatMainCake {
+      0% { transform: translateY(0px) rotate(-0.5deg); }
+      100% { transform: translateY(-12px) rotate(0.8deg); }
+    }
+
+    /* Passcode Card Container */
+    .passcode-card {
+      background: rgba(255, 255, 255, 0.95);
+      border: 3.5px solid #ffccd7;
+      border-radius: 28px;
+      padding: 24px 28px 26px;
+      box-shadow: 0 16px 40px rgba(220, 80, 110, 0.18), 0 0 0 6px rgba(255, 240, 245, 0.85);
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      position: relative;
+    }
+
+    /* Prompt Text: code daal idhar bhains */
+    .passcode-prompt {
+      font-family: 'Fredoka', cursive;
+      font-size: clamp(19px, 3.8vw, 24px);
+      font-weight: 700;
+      color: #74001a;
+      letter-spacing: 0.5px;
+      text-transform: lowercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    /* 6 Passcode Slots */
+    .password-slots-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    .pwd-slot {
+      width: clamp(44px, 8.5vw, 56px);
+      height: clamp(52px, 9.8vw, 64px);
+      border-radius: 14px;
+      border: 3px solid #ffccd7;
+      background: #fffdfb;
+      text-align: center;
+      font-family: 'Sniglet', 'Fredoka', cursive;
+      font-size: clamp(24px, 4.5vw, 32px);
+      font-weight: 800;
+      color: #63331b;
+      text-transform: uppercase;
+      caret-color: #e8557b;
+      outline: none;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.04), 0 4px 10px rgba(220, 90, 120, 0.08);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-sizing: border-box;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .pwd-slot:focus {
+      border-color: #ff5277;
+      background: #ffffff;
+      transform: translateY(-3px) scale(1.06);
+      box-shadow: 0 8px 20px rgba(255, 82, 119, 0.28), 0 0 0 4px rgba(255, 180, 200, 0.4);
+    }
+
+    .pwd-slot.filled {
+      border-color: #ff7597;
+      background: #fff5f8;
+      color: #d8315b;
+    }
+
+    /* Error Shake Animation */
+    .shake {
+      animation: shakeBoxes 0.5s ease-in-out;
+    }
+
+    @keyframes shakeBoxes {
+      0%, 100% { transform: translateX(0); }
+      15%, 45%, 75% { transform: translateX(-9px); }
+      30%, 60%, 90% { transform: translateX(9px); }
+    }
+
+    .error-box {
+      border-color: #e63946 !important;
+      background: #ffebee !important;
+      color: #c9182b !important;
+      box-shadow: 0 0 14px rgba(230, 57, 70, 0.35) !important;
+    }
+
+    /* Error Toast */
+    .hint-toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(30px);
+      background: linear-gradient(135deg, #e63946, #c9182b);
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 10px 22px;
+      border-radius: 50px;
+      box-shadow: 0 8px 24px rgba(200, 25, 45, 0.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 100;
+      white-space: nowrap;
+    }
+
+    .hint-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Rising Balloons and Cartoon Cow Faces Swarm */
+    .rising-floater {
+      position: fixed;
+      bottom: -140px;
+      left: 0;
+      pointer-events: none;
+      z-index: 99999;
+      will-change: transform, opacity;
+      animation: floatUpToTop linear forwards;
+    }
+
+    @keyframes floatUpToTop {
+      0% {
+        transform: translateY(0) translateX(0) scale(0.7) rotate(0deg);
+        opacity: 0;
+      }
+      8% { opacity: 1; }
+      50% { transform: translateY(-70vh) translateX(34px) scale(1.06) rotate(12deg); }
+      85% { opacity: 0.95; }
+      100% {
+        transform: translateY(-135vh) translateX(-28px) scale(1.15) rotate(-14deg);
+        opacity: 0;
+      }
+    }
+
+    /* Transition Banner Toast */
+    .transition-toast {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.7);
+      background: rgba(255, 255, 255, 0.96);
+      border: 5px solid #ff7597;
+      padding: 26px 44px;
+      border-radius: 36px;
+      box-shadow: 0 25px 65px rgba(220, 60, 100, 0.4), 0 0 0 10px rgba(255, 235, 242, 0.9);
+      z-index: 100000;
+      font-size: clamp(22px, 4vw, 32px);
+      font-family: 'Sniglet', 'Fredoka', cursive;
+      color: #e63964;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .transition-toast.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    @media (max-width: 600px) {
+      .portal-container { padding-top: 30px; }
+      .passcode-card { padding: 20px 16px; }
+      .password-slots-row { gap: 6px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Ambient Floating Emojis (Cows, Cakes, Balloons, Bows) -->
+  <div class="bg-floater" style="top: 8%; left: 6%; font-size: 38px;">🎈</div>
+  <div class="bg-floater" style="top: 15%; right: 18%; font-size: 36px; animation-delay: 1.5s;">🎉</div>
+  <div class="bg-floater" style="bottom: 12%; right: 8%; font-size: 38px; animation-delay: 4s;">🎀</div>
+  <div class="bg-floater" style="bottom: 25%; right: 12%; font-size: 32px; animation-delay: 1.2s;">✨</div>
+
+  <!-- 5 Playful Cow Emojis -->
+  <div class="bg-floater" style="top: 20%; left: 7%; font-size: 36px; animation-delay: 2s;">🐮</div>
+  <div class="bg-floater" style="top: 12%; right: 8%; font-size: 42px; animation-delay: 0.8s;">🐮</div>
+  <div class="bg-floater" style="top: 48%; left: 4%; font-size: 44px; animation-delay: 2.6s;">🐮</div>
+  <div class="bg-floater" style="bottom: 34%; right: 6%; font-size: 38px; animation-delay: 3.6s;">🐮</div>
+  <div class="bg-floater" style="top: 76%; left: 14%; font-size: 36px; animation-delay: 1.8s;">🐮</div>
+
+  <!-- 4 Delicious Cake Emojis -->
+  <div class="bg-floater" style="bottom: 14%; left: 7%; font-size: 40px; animation-delay: 3s;">🍰</div>
+  <div class="bg-floater" style="top: 32%; right: 7%; font-size: 38px; animation-delay: 1.1s;">🍰</div>
+  <div class="bg-floater" style="top: 66%; right: 15%; font-size: 42px; animation-delay: 2.9s;">🎂</div>
+  <div class="bg-floater" style="bottom: 8%; left: 24%; font-size: 36px; animation-delay: 4.4s;">🍰</div>
+
+  <!-- Centerpiece Portal Stage -->
+  <div class="portal-container">
+    <h1 class="main-title">Happy Birthday Sarah 🎀</h1>
+
+    <!-- Floating Birthday Cake Artwork -->
+    <div class="cake-showcase" id="cakeShowcase" title="Tap the cake!">
+      <img src="birthday_cake_new.png" alt="Happy Birthday Cake" id="mainCakeImg">
+    </div>
+
+    <!-- Passcode Unlock Card -->
+    <div class="passcode-card" id="passwordGroup">
+      <div class="passcode-prompt">
+        code daal idhar bhains 🐮
+      </div>
+
+      <!-- 6 Passcode Slots -->
+      <div class="password-slots-row">
+        <input type="text" maxlength="1" class="pwd-slot" data-index="0" autocomplete="off" autofocus>
+        <input type="text" maxlength="1" class="pwd-slot" data-index="1" autocomplete="off">
+        <input type="text" maxlength="1" class="pwd-slot" data-index="2" autocomplete="off">
+        <input type="text" maxlength="1" class="pwd-slot" data-index="3" autocomplete="off">
+        <input type="text" maxlength="1" class="pwd-slot" data-index="4" autocomplete="off">
+        <input type="text" maxlength="1" class="pwd-slot" data-index="5" autocomplete="off">
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification for wrong password -->
+  <div class="hint-toast" id="hintToast">Galat code hy! 🐮 Dobara try kr</div>
+
+  <!-- Transition Toast on Success -->
+  <div class="transition-toast" id="transitionToast">
+    yayyyy lesgo 🎉
+  </div>
+
+  <script>
+    // 1. DOM Elements
+    const slots = document.querySelectorAll('.pwd-slot');
+    const passwordGroup = document.getElementById('passwordGroup');
+    const hintToast = document.getElementById('hintToast');
+    const cakeShowcase = document.getElementById('cakeShowcase');
+    const TARGET_PASS = 'BHAINS';
+    let isUnlocked = false;
+
+    // 2. Audio Synthesizer
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+    try {
+      if (AudioContextClass) audioCtx = new AudioContextClass();
+    } catch (e) { }
+
+    function resumeAudio() {
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+    document.addEventListener('click', resumeAudio, { once: true });
+    document.addEventListener('keydown', resumeAudio, { once: true });
+
+    function playTone(freq, duration, type = 'sine', delay = 0) {
+      setTimeout(() => {
+        try {
+          if (!audioCtx) return;
+          resumeAudio();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + duration);
+        } catch (e) { }
+      }, delay);
+    }
+
+    function playTypePop() {
+      playTone(480 + Math.random() * 80, 0.08, 'triangle', 0);
+    }
+
+    function playSuccessChime() {
+      playTone(523.25, 0.25, 'triangle', 0);    // C5
+      playTone(659.25, 0.25, 'triangle', 120);  // E5
+      playTone(783.99, 0.3, 'triangle', 240);   // G5
+      playTone(1046.50, 0.6, 'sine', 360);      // C6
+    }
+
+    function playErrorBuzzer() {
+      playTone(220, 0.15, 'sawtooth', 0);
+      playTone(180, 0.25, 'sawtooth', 120);
+    }
+
+    // 3. Interactive Passcode Logic
+    slots.forEach((slot, idx) => {
+      slot.addEventListener('focus', () => {
+        slot.select();
+      });
+
+      slot.addEventListener('keydown', (e) => {
+        // Backspace handling
+        if (e.key === 'Backspace') {
+          e.preventDefault();
+          if (slot.value) {
+            slot.value = '';
+            slot.classList.remove('filled');
+          } else if (idx > 0) {
+            slots[idx - 1].focus();
+            slots[idx - 1].value = '';
+            slots[idx - 1].classList.remove('filled');
+          }
+          return;
+        }
+
+        // Arrow Key Navigation
+        if (e.key === 'ArrowLeft' && idx > 0) {
+          e.preventDefault();
+          slots[idx - 1].focus();
+          slots[idx - 1].select();
+          return;
+        }
+        if (e.key === 'ArrowRight' && idx < slots.length - 1) {
+          e.preventDefault();
+          slots[idx + 1].focus();
+          slots[idx + 1].select();
+          return;
+        }
+
+        // Enter to check
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          checkPassword();
+          return;
+        }
+
+        // Single letter key A-Z
+        if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
+          if (/^[a-zA-Z]$/.test(e.key)) {
+            e.preventDefault();
+            slot.value = e.key.toUpperCase();
+            slot.classList.add('filled');
+            playTypePop();
+
+            // Jump to next box
+            if (idx < slots.length - 1) {
+              slots[idx + 1].focus();
+              slots[idx + 1].select();
+            }
+
+            checkPassword();
+          }
+        }
+      });
+
+      // Fallback for mobile / virtual keyboards
+      slot.addEventListener('input', () => {
+        const val = slot.value.toUpperCase();
+        slot.value = val.slice(-1);
+        if (slot.value) {
+          slot.classList.add('filled');
+          playTypePop();
+          if (idx < slots.length - 1) {
+            slots[idx + 1].focus();
+            slots[idx + 1].select();
+          }
+        } else {
+          slot.classList.remove('filled');
+        }
+        checkPassword();
+      });
+
+      // Paste entire word
+      slot.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const pastedData = (e.clipboardData || window.clipboardData).getData('text').trim().toUpperCase();
+        for (let i = 0; i < slots.length; i++) {
+          if (pastedData[i]) {
+            slots[i].value = pastedData[i];
+            slots[i].classList.add('filled');
+          }
+        }
+        playTypePop();
+        const lastIdx = Math.min(pastedData.length, slots.length) - 1;
+        if (lastIdx >= 0 && lastIdx < slots.length - 1) {
+          slots[lastIdx + 1].focus();
+          slots[lastIdx + 1].select();
+        } else {
+          slots[slots.length - 1].focus();
+        }
+        checkPassword();
+      });
+    });
+
+    // Global typing: user can start typing anywhere on the screen
+    window.addEventListener('keydown', (e) => {
+      if (document.activeElement && document.activeElement.tagName === 'INPUT' && !document.activeElement.classList.contains('pwd-slot')) {
+        return;
+      }
+      if (document.activeElement && document.activeElement.classList.contains('pwd-slot')) return;
+
+      if (e.key === 'Enter') {
+        checkPassword();
+        return;
+      }
+
+      if (e.key.length === 1 && /^[a-zA-Z]$/.test(e.key) && !e.ctrlKey && !e.altKey && !e.metaKey) {
+        e.preventDefault();
+        const firstEmpty = Array.from(slots).find(s => !s.value) || slots[0];
+        const emptyIdx = parseInt(firstEmpty.getAttribute('data-index'), 10);
+        firstEmpty.value = e.key.toUpperCase();
+        firstEmpty.classList.add('filled');
+        playTypePop();
+
+        if (emptyIdx < slots.length - 1) {
+          slots[emptyIdx + 1].focus();
+          slots[emptyIdx + 1].select();
+        } else {
+          firstEmpty.focus();
+        }
+        checkPassword();
+      }
+    });
+
+    function showHint(text) {
+      hintToast.textContent = text;
+      hintToast.classList.add('show');
+      setTimeout(() => {
+        hintToast.classList.remove('show');
+      }, 2400);
+    }
+
+    // Balloon SVG generator
+    function getThemeBalloonSVG(colorType) {
+      const colors = {
+        pink: { fill: '#ff82a0', highlight: '#ffcad7', knot: '#e85a80' },
+        cream: { fill: '#f7dba2', highlight: '#fff2d6', knot: '#e0bd78' },
+        strawberry: { fill: '#ff5c82', highlight: '#ffa3b9', knot: '#db3b64' },
+        peach: { fill: '#ffa990', highlight: '#ffcfc3', knot: '#e58369' }
+      };
+      const c = colors[colorType] || colors.pink;
+      return `
+        <svg viewBox="0 0 70 110" width="100%" height="100%" style="overflow: visible; filter: drop-shadow(0 8px 16px rgba(80, 35, 18, 0.25));">
+          <ellipse cx="35" cy="40" rx="30" ry="36" fill="${c.fill}" stroke="#482315" stroke-width="3" />
+          <path d="M 20 20 Q 28 14 36 18" fill="none" stroke="${c.highlight}" stroke-width="4.5" stroke-linecap="round" opacity="0.9" />
+          <circle cx="18" cy="28" r="2.5" fill="${c.highlight}" opacity="0.9" />
+          <polygon points="31,76 39,76 35,82" fill="${c.knot}" stroke="#482315" stroke-width="2.2" />
+          <path d="M 35 82 Q 43 90 32 98 Q 24 104 36 112" fill="none" stroke="#5a2d1d" stroke-width="2.5" stroke-linecap="round" />
+        </svg>
+      `;
+    }
+
+    // Cute Cartoon Cow Face SVG
+    function getThemeCowFaceSVG() {
+      return `
+        <svg viewBox="0 0 90 85" width="100%" height="100%" style="overflow: visible; filter: drop-shadow(0 8px 18px rgba(80, 35, 18, 0.28));">
+          <path d="M 22 24 C 18 10 26 4 30 14" fill="#8c5838" stroke="#482315" stroke-width="2.5" stroke-linejoin="round" />
+          <path d="M 68 24 C 72 10 64 4 60 14" fill="#8c5838" stroke="#482315" stroke-width="2.5" stroke-linejoin="round" />
+          <path d="M 18 34 C 4 30 2 46 16 44 Z" fill="#fff7e7" stroke="#482315" stroke-width="2.5" />
+          <path d="M 16 35 C 7 32 6 43 15 42 Z" fill="#ffaec0" />
+          <path d="M 72 34 C 86 30 88 46 74 44 Z" fill="#fff7e7" stroke="#482315" stroke-width="2.5" />
+          <path d="M 74 35 C 83 32 84 43 75 42 Z" fill="#ffaec0" />
+          <ellipse cx="45" cy="46" rx="33" ry="28" fill="#fff7e7" stroke="#482315" stroke-width="3" />
+          <path d="M 41 19 Q 45 14 49 19 Q 53 15 55 20" fill="none" stroke="#482315" stroke-width="2.5" stroke-linecap="round" />
+          <ellipse cx="45" cy="56" rx="20" ry="14" fill="#faebd0" stroke="#482315" stroke-width="2.2" />
+          <ellipse cx="38" cy="54" rx="2" ry="3" fill="#482315" />
+          <ellipse cx="52" cy="54" rx="2" ry="3" fill="#482315" />
+          <path d="M 40 62 Q 45 66 50 62" fill="none" stroke="#482315" stroke-width="2.2" stroke-linecap="round" />
+          <ellipse cx="23" cy="50" rx="6" ry="4" fill="#ff9cb4" opacity="0.9" />
+          <ellipse cx="67" cy="50" rx="6" ry="4" fill="#ff9cb4" opacity="0.9" />
+          <ellipse cx="33" cy="38" rx="4" ry="5.5" fill="#482315" />
+          <circle cx="34.5" cy="36" r="1.8" fill="#ffffff" />
+          <ellipse cx="57" cy="38" rx="4" ry="5.5" fill="#482315" />
+          <circle cx="58.5" cy="36" r="1.8" fill="#ffffff" />
+        </svg>
+      `;
+    }
+
+    // Swarm of Rising Theme Balloons & Cartoon Cow Faces
+    function launchRisingAnimation() {
+      const balloonColors = ['pink', 'cream', 'strawberry', 'peach'];
+      const total = 46;
+
+      for (let i = 0; i < total; i++) {
+        const floater = document.createElement('div');
+        floater.className = 'rising-floater';
+        const isCow = (i % 2 === 1);
+
+        if (isCow) {
+          floater.innerHTML = getThemeCowFaceSVG();
+          const sz = Math.floor(Math.random() * 24 + 65);
+          floater.style.width = sz + 'px';
+          floater.style.height = Math.round(sz * 0.94) + 'px';
+        } else {
+          const color = balloonColors[Math.floor(Math.random() * balloonColors.length)];
+          floater.innerHTML = getThemeBalloonSVG(color);
+          const sz = Math.floor(Math.random() * 24 + 55);
+          floater.style.width = sz + 'px';
+          floater.style.height = Math.round(sz * 1.57) + 'px';
+        }
+
+        floater.style.left = (Math.random() * 92 + 3) + 'vw';
+        floater.style.animationDuration = (Math.random() * 0.8 + 2.0) + 's';
+        floater.style.animationDelay = (Math.random() * 0.8) + 's';
+        document.body.appendChild(floater);
+      }
+
+      const toast = document.getElementById('transitionToast');
+      if (toast) toast.classList.add('show');
+    }
+
+    function checkPassword() {
+      if (isUnlocked) return;
+      let currentWord = '';
+      slots.forEach(s => {
+        currentWord += (s.value || '').trim().toUpperCase();
+      });
+
+      if (currentWord.length < 6) return;
+
+      if (currentWord === TARGET_PASS) {
+        isUnlocked = true;
+        sessionStorage.setItem('bhains_unlocked', 'true');
+        localStorage.setItem('bhains_unlocked', 'true');
+        playSuccessChime();
+        triggerConfettiCelebration();
+        launchRisingAnimation();
+
+        // After the balloons & cartoon cows float up, navigate to wishes page!
+        setTimeout(() => {
+          window.location.href = 'wishes.html';
+        }, 2500);
+      } else {
+        playErrorBuzzer();
+        passwordGroup.classList.add('shake');
+        slots.forEach(s => s.classList.add('error-box'));
+        showHint('Galat code hy! 🐮 Dobara try kr');
+
+        setTimeout(() => {
+          passwordGroup.classList.remove('shake');
+          slots.forEach(s => {
+            s.classList.remove('error-box');
+            s.value = '';
+            s.classList.remove('filled');
+          });
+          slots[0].focus();
+        }, 850);
+      }
+    }
+
+    function triggerConfettiCelebration() {
+      if (typeof confetti === 'function') {
+        const count = 200;
+        const defaults = { origin: { y: 0.65 } };
+
+        function fire(particleRatio, opts) {
+          confetti(Object.assign({}, defaults, opts, {
+            particleCount: Math.floor(count * particleRatio)
+          }));
+        }
+
+        fire(0.25, { spread: 26, startVelocity: 55 });
+        fire(0.2, { spread: 60 });
+        fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+        fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+        fire(0.1, { spread: 120, startVelocity: 45 });
+      }
+    }
+
+    // Tap cake for playful bounce & confetti
+    if (cakeShowcase) {
+      cakeShowcase.addEventListener('click', () => {
+        playTone(659.25, 0.15, 'triangle', 0);
+        playTone(880, 0.3, 'sine', 90);
+        if (typeof confetti === 'function') {
+          confetti({
+            particleCount: 45,
+            spread: 60,
+            origin: { y: 0.45 }
+          });
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>

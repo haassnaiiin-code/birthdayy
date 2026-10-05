@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday Sarah! 🎀💌</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fredoka:wght@400;500;600;700&family=Kalam:wght@400;700&family=Pacifico&family=Sniglet:wght@800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background: radial-gradient(circle at center, #fffaf0 0%, #fceedc 100%);
+      font-family: 'Fredoka', cursive, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      overflow-x: hidden;
+      color: #552d1c;
+      padding: 30px 16px;
+      position: relative;
+    }
+
+    /* Floating ambient emojis in background */
+    .bg-floater {
+      position: fixed;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.6;
+      animation: gentleDrift 7s ease-in-out infinite alternate;
+    }
+
+    @keyframes gentleDrift {
+      0% { transform: translateY(0px) rotate(-6deg); }
+      100% { transform: translateY(-28px) rotate(6deg); }
+    }
+
+    /* Header Section */
+    .page-header {
+      text-align: center;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #ffe3eb;
+      color: #e0446b;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 6px 18px;
+      border-radius: 50px;
+      border: 2px dashed #ff88a3;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .page-title {
+      font-family: 'Sniglet', cursive;
+      font-size: clamp(30px, 4.5vw, 42px);
+      color: #e6426d;
+      margin-bottom: 6px;
+      text-shadow: 2px 2px 0px #ffe1e8;
+    }
+
+    .page-subtitle {
+      font-size: clamp(16px, 2.2vw, 19px);
+      color: #8c5338;
+      font-weight: 600;
+    }
+
+    /* 4 Letters 2x2 Grid Container: 2 Above, 2 Below in Equal Proportion */
+    .letters-container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto 36px;
+      padding: 0 16px;
+    }
+
+    .letters-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px 32px;
+      justify-items: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    @media (max-width: 580px) {
+      .letters-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+    }
+
+    /* Individual Letter Card */
+    .letter-card {
+      position: relative;
+      width: 100%;
+      max-width: 320px;
+      aspect-ratio: 600 / 378;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease;
+      transform-origin: center center;
+    }
+
+    .letter-card:hover {
+      transform: translateY(-8px) scale(1.04);
+      filter: drop-shadow(0 14px 22px rgba(120, 50, 20, 0.25));
+    }
+
+    .letter-card:active {
+      transform: scale(0.97);
+    }
+
+    /* Envelope Image */
+    .envelope-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      pointer-events: none;
+      filter: drop-shadow(0 8px 16px rgba(110, 45, 15, 0.18));
+      transition: filter 0.25s ease;
+    }
+
+    /* Cute Letter Badge Tag */
+    .letter-tag {
+      position: absolute;
+      bottom: -10px;
+      background: #ffffff;
+      border: 2px solid #ff88a3;
+      color: #d84566;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 3px 12px;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(220, 70, 100, 0.2);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .letter-card:hover .letter-tag {
+      background: #ff6584;
+      color: #ffffff;
+      border-color: #ff6584;
+      transform: scale(1.08);
+    }
+
+    /* Opened Indicator Stamp */
+    .opened-stamp {
+      position: absolute;
+      top: -8px;
+      right: 6px;
+      background: #4bb543;
+      color: white;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(75, 181, 67, 0.35);
+      display: none;
+      letter-spacing: 0.5px;
+    }
+
+    .letter-card.is-opened .opened-stamp {
+      display: block;
+    }
+
+    /* Vibration Animation when letter is clicked */
+    .vibrating {
+      animation: letterVibrate 0.45s ease-in-out !important;
+    }
+
+    @keyframes letterVibrate {
+      0% { transform: scale(1) rotate(0deg); }
+      15% { transform: scale(1.08) rotate(-4deg); }
+      30% { transform: scale(1.08) rotate(4deg); }
+      45% { transform: scale(1.1) rotate(-3deg); }
+      60% { transform: scale(1.1) rotate(3deg); }
+      75% { transform: scale(1.05) rotate(-1.5deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+
+    /* Middle Pop-Up Modal (Covers 40-45% of the screen) */
+    .letter-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(40, 18, 10, 0.65);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      padding: 20px;
+    }
+
+    .letter-modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* The Unfolded Letter Popup: 42-45% of screen width */
+    .letter-modal-card {
+      position: relative;
+      width: 44vw;
+      min-width: 320px;
+      max-width: 580px;
+      background: #fffdf8;
+      background-image: 
+        radial-gradient(#f7ebd2 1px, transparent 1px),
+        radial-gradient(#f7ebd2 1px, #fffdf8 1px);
+      background-size: 20px 20px;
+      background-position: 0 0, 10px 10px;
+      border: 5px solid #d4986a;
+      border-radius: 28px;
+      padding: 38px 32px 30px;
+      text-align: center;
+      box-shadow: 0 25px 65px rgba(0, 0, 0, 0.45), 0 0 0 8px rgba(255, 240, 220, 0.85);
+      transform: scale(0.65) translateY(40px);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @media (max-width: 768px) {
+      .letter-modal-card {
+        width: 88vw;
+      }
+    }
+
+    .letter-modal-overlay.active .letter-modal-card {
+      transform: scale(1) translateY(0);
+    }
+
+    /* Modal Wax Stamp Emblem */
+    .modal-wax-stamp {
+      position: absolute;
+      top: -34px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 68px;
+      height: 68px;
+      background: #8e1c2d;
+      border: 4px solid #fff5ea;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      box-shadow: 0 8px 18px rgba(142, 28, 45, 0.45);
+      animation: pulseWax 2s infinite alternate ease-in-out;
+    }
+
+    @keyframes pulseWax {
+      0% { transform: translateX(-50%) scale(1); }
+      100% { transform: translateX(-50%) scale(1.08); }
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      background: #f0e2d3;
+      border: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 20px;
+      font-weight: bold;
+      color: #63331b;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .modal-close-btn:hover {
+      background: #ff6584;
+      color: white;
+      transform: rotate(90deg);
+    }
+
+    .modal-letter-title {
+      font-family: 'Sniglet', cursive;
+      font-size: clamp(22px, 3.2vw, 28px);
+      color: #8e1c2d;
+      margin-top: 18px;
+      margin-bottom: 6px;
+    }
+
+    .modal-letter-tagline {
+      font-family: 'Pacifico', cursive;
+      font-size: 16px;
+      color: #9d5d3e;
+      margin-bottom: 18px;
+    }
+
+    /* Parchment Note Area */
+    .modal-note-body {
+      background: #fff8ed;
+      border: 2px dashed #e2a87b;
+      border-radius: 18px;
+      padding: 22px 20px;
+      margin-bottom: 24px;
+      font-size: clamp(16px, 2.2vw, 19px);
+      line-height: 1.65;
+      color: #532c1b;
+      font-weight: 600;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.03);
+    }
+
+    /* Clean Image-Only Mode for Letter 1 (Pure Handwritten Wrinkled Letter) */
+    .letter-modal-card.image-only-mode {
+      position: relative !important;
+      background: transparent !important;
+      background-image: none !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      width: min(560px, 45vw) !important;
+      max-width: 560px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      overflow: visible !important;
+    }
+
+    .letter-modal-card.image-only-mode .modal-wax-stamp,
+    .letter-modal-card.image-only-mode .modal-letter-title,
+    .letter-modal-card.image-only-mode .modal-letter-tagline,
+    .letter-modal-card.image-only-mode .modal-note-body,
+    .letter-modal-card.image-only-mode .modal-actions {
+      display: none !important;
+    }
+
+    .written-letter-img {
+      display: none;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 20px 45px rgba(0, 0, 0, 0.65));
+      border-radius: 12px;
+      user-select: none;
+      pointer-events: auto;
+    }
+
+    .letter-modal-card.image-only-mode .written-letter-img {
+      display: block !important;
+      animation: floatWrinkledLetter 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatWrinkledLetter {
+      0% { transform: translateY(0px) rotate(-0.5deg); }
+      100% { transform: translateY(-8px) rotate(0.8deg); }
+    }
+
+    .letter-modal-card.image-only-mode .modal-close-btn {
+      position: absolute;
+      top: -12px;
+      right: -12px;
+      background: #8e1c2d;
+      color: white;
+      border: 3px solid #fff;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+      z-index: 10;
+      width: 36px;
+      height: 36px;
+    }
+
+    .letter-modal-card.image-only-mode .modal-close-btn:hover {
+      background: #ff5277;
+      transform: scale(1.1) rotate(90deg);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-confetti-btn {
+      background: linear-gradient(135deg, #ff6584, #ff8fa5);
+      color: white;
+      border: none;
+      padding: 11px 24px;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: 50px;
+      font-family: 'Fredoka', cursive;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(255, 101, 132, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .modal-confetti-btn:hover {
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 10px 22px rgba(255, 101, 132, 0.55);
+    }
+
+    .modal-done-btn {
+      background: #ede0d2;
+      color: #613622;
+      border: none;
+      padding: 11px 22px;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: 50px;
+      font-family: 'Fredoka', cursive;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .modal-done-btn:hover {
+      background: #e2ceba;
+    }
+
+    /* Treat Button at Bottom */
+    .page-footer {
+      position: relative;
+      z-index: 10;
+      margin-top: 14px;
+      margin-bottom: 28px;
+    }
+
+    /* Maroon Red Treat Button at Bottom */
+    .page-footer {
+      position: relative;
+      z-index: 10;
+      margin-top: 14px;
+      margin-bottom: 28px;
+    }
+
+    .btn-treat {
+      background: linear-gradient(135deg, #74001a, #8e0b29, #560012);
+      color: #fff4e6;
+      border: 3px solid #f9d8b9;
+      font-family: 'Fredoka', cursive;
+      font-size: 19px;
+      font-weight: 700;
+      padding: 14px 40px;
+      border-radius: 50px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45), 0 0 12px rgba(255, 230, 180, 0.5);
+      box-shadow: 0 10px 28px rgba(116, 0, 26, 0.5), 0 0 0 5px rgba(255, 220, 230, 0.65);
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      animation: pulseTreatBtnMaroon 2.2s infinite ease-in-out;
+      letter-spacing: 0.5px;
+    }
+
+    @keyframes pulseTreatBtnMaroon {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 10px 28px rgba(116, 0, 26, 0.5), 0 0 0 5px rgba(255, 220, 230, 0.65);
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 16px 36px rgba(142, 11, 41, 0.75), 0 0 0 8px rgba(255, 235, 240, 0.9);
+      }
+    }
+
+    .btn-treat:hover {
+      transform: translateY(-4px) scale(1.08);
+      background: linear-gradient(135deg, #8a0c28, #a31234, #660317);
+      box-shadow: 0 18px 42px rgba(116, 0, 26, 0.7), 0 0 0 6px rgba(255, 245, 248, 0.95);
+      color: #ffffff;
+    }
+
+    .btn-treat:active {
+      transform: scale(0.96);
+    }
+
+    /* Treat Celebration Modal (Clean Borderless Floating Cake on Blurred Backdrop) */
+    .treat-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(20, 6, 12, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      padding: 20px;
+    }
+
+    .treat-modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Completely borderless & transparent - no square card background */
+    .treat-modal-card {
+      position: relative;
+      width: min(520px, 94vw);
+      background: transparent !important;
+      background-image: none !important;
+      border: none !important;
+      border-radius: 0 !important;
+      padding: 10px 0 !important;
+      text-align: center;
+      box-shadow: none !important;
+      transform: scale(0.7) translateY(30px);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow: visible;
+    }
+
+    .treat-modal-overlay.active .treat-modal-card {
+      transform: scale(1) translateY(0);
+    }
+
+    .treat-title {
+      font-family: 'Sniglet', cursive;
+      font-size: clamp(26px, 5vw, 40px);
+      color: #ffffff;
+      margin-bottom: 14px;
+      text-shadow: 0 3px 14px rgba(255, 90, 150, 0.75), 0 0 28px rgba(255, 180, 200, 0.6), 2px 2px 6px rgba(0, 0, 0, 0.7);
+      letter-spacing: 0.5px;
+      line-height: 1.25;
+    }
+
+    .treat-cake-wrapper {
+      position: relative;
+      width: min(380px, 82vw);
+      aspect-ratio: 1 / 1;
+      margin: 8px auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .treat-cake-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 20px 42px rgba(0, 0, 0, 0.55));
+      animation: floatCake 3.5s ease-in-out infinite alternate;
+      transition: transform 0.25s ease;
+      user-select: none;
+    }
+
+    .treat-cake-wrapper:hover .treat-cake-img {
+      transform: scale(1.06) rotate(1deg);
+    }
+
+    .treat-cake-wrapper:active .treat-cake-img {
+      transform: scale(0.95);
+    }
+
+    @keyframes floatCake {
+      0% { transform: translateY(0px) rotate(-0.5deg); }
+      100% { transform: translateY(-12px) rotate(0.8deg); }
+    }
+
+    /* Screen Sparkles System - Ultra Optimized */
+    .screen-sparkles-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 99999;
+      contain: strict;
+    }
+
+    .screen-sparkle {
+      position: fixed;
+      pointer-events: none;
+      user-select: none;
+      opacity: 0;
+      text-shadow: 0 0 8px #ffe600, 0 0 16px rgba(255, 105, 180, 0.7);
+      will-change: transform, opacity;
+      transform: translate3d(0, 0, 0);
+      animation: screenSparkleFlight 1.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+
+    @keyframes screenSparkleFlight {
+      0% {
+        opacity: 0;
+        transform: translate3d(0, 0, 0) scale(0.3) rotate(0deg);
+      }
+      20% {
+        opacity: 1;
+        transform: translate3d(calc(var(--sx) * 0.4), calc(var(--sy) * 0.4), 0) scale(1.3) rotate(60deg);
+      }
+      75% {
+        opacity: 0.95;
+        transform: translate3d(var(--sx), var(--sy), 0) scale(1) rotate(140deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translate3d(calc(var(--sx) * 1.15), calc(var(--sy) * 1.15 - 30px), 0) scale(0.3) rotate(220deg);
+      }
+    }
+
+    .treat-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 6px;
+    }
+
+    /* Only Cow Face Button - Super Smooth 60fps & Instant Response */
+    .treat-cow-btn {
+      background: linear-gradient(135deg, #74001a, #961230);
+      color: white;
+      border: 3px solid #fff5ea;
+      width: 72px;
+      height: 72px;
+      font-size: 38px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 0 5px rgba(255, 230, 240, 0.7);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      transform: translateZ(0);
+      will-change: transform;
+      transition: transform 0.12s cubic-bezier(0.2, 0.9, 0.3, 1.2), box-shadow 0.15s ease;
+      animation: gentleCowFloat 2.4s infinite alternate ease-in-out;
+    }
+
+    @keyframes gentleCowFloat {
+      0% { transform: translateY(0px) scale(1); }
+      100% { transform: translateY(-4px) scale(1.05); }
+    }
+
+    .treat-cow-btn:hover {
+      transform: translateY(-5px) scale(1.14) rotate(8deg);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55), 0 0 0 7px rgba(255, 255, 255, 0.95);
+    }
+
+    .treat-cow-btn:active {
+      transform: translateY(3px) scale(0.9) !important;
+      transition-duration: 0.05s !important;
+    }
+
+    .treat-close-btn {
+      position: absolute;
+      top: -22px;
+      right: -8px;
+      background: rgba(255, 255, 255, 0.22);
+      border: 2px solid rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(8px);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      font-size: 22px;
+      font-weight: bold;
+      color: #ffffff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+      z-index: 20;
+    }
+
+    .treat-close-btn:hover {
+      background: #8e0b29;
+      border-color: #ffffff;
+      transform: scale(1.1) rotate(90deg);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Floating Emojis -->
+  <div class="bg-floater" style="top: 8%; left: 5%; font-size: 38px;">🎈</div>
+  <div class="bg-floater" style="top: 14%; right: 6%; font-size: 36px; animation-delay: 1.5s;">🎉</div>
+  <div class="bg-floater" style="bottom: 12%; left: 7%; font-size: 42px; animation-delay: 2.5s;">🐮</div>
+  <div class="bg-floater" style="bottom: 16%; right: 6%; font-size: 38px; animation-delay: 3.5s;">🍰</div>
+
+  <!-- Header -->
+  <div class="page-header">
+    <h1 class="page-title">Happy Birthday Sarah 🎀</h1>
+  </div>
+
+  <!-- 4 Letters 2x2 Grid (2 above, 2 below) -->
+  <div class="letters-container">
+    <div class="letters-grid" id="lettersGrid">
+
+      <!-- Letter 1 (Row 1, Left) -->
+      <div class="letter-card" data-letter="0">
+        <img src="letter_envelope.png" alt="Letter #1" class="envelope-img">
+        <div class="letter-tag">💌 Letter #1</div>
+        <div class="opened-stamp">Opened ✓</div>
+      </div>
+
+      <!-- Letter 2 (Row 1, Right) -->
+      <div class="letter-card" data-letter="1">
+        <img src="letter_envelope.png" alt="Letter #2" class="envelope-img">
+        <div class="letter-tag">💌 Letter #2</div>
+        <div class="opened-stamp">Opened ✓</div>
+      </div>
+
+      <!-- Letter 3 (Row 2, Left) -->
+      <div class="letter-card" data-letter="2">
+        <img src="letter_envelope.png" alt="Letter #3" class="envelope-img">
+        <div class="letter-tag">💌 Letter #3</div>
+        <div class="opened-stamp">Opened ✓</div>
+      </div>
+
+      <!-- Letter 4 (Row 2, Right) -->
+      <div class="letter-card" data-letter="3">
+        <img src="letter_envelope.png" alt="Letter #4" class="envelope-img">
+        <div class="letter-tag">💌 Letter #4</div>
+        <div class="opened-stamp">Opened ✓</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Treat Button -->
+  <div class="page-footer">
+    <button class="btn-treat" id="treatBtn">
+      <span>🎂 teri treat idr hy ✨</span>
+    </button>
+  </div>
+
+  <!-- Modal Pop-Up (40-45% of screen width) -->
+  <div class="letter-modal-overlay" id="letterModal">
+    <div class="letter-modal-card">
+      <div class="modal-wax-stamp">🐮</div>
+      <button class="modal-close-btn" id="closeModalBtn" title="Close letter">&times;</button>
+
+      <!-- Clean Wrinkled Handwritten Letter Image for Letter 1 -->
+      <img src="letter_1_written.png" alt="Letter #1 Written Note" class="written-letter-img" id="writtenLetterImg">
+      
+      <h3 class="modal-letter-title" id="modalTitle">Letter #1</h3>
+      <p class="modal-letter-tagline" id="modalTagline">Special Delivery for Sarah 🎀</p>
+      
+      <div class="modal-note-body" id="modalBody">
+        Loading your special birthday note...
+      </div>
+
+      <div class="modal-actions">
+        <button class="modal-confetti-btn" id="modalConfettiBtn">🎉 Celebrate!</button>
+        <button class="modal-done-btn" id="modalDoneBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Big Treat Celebration Modal -->
+  <div class="treat-modal-overlay" id="treatModal">
+    <div class="treat-modal-card">
+      <button class="treat-close-btn" id="closeTreatBtn" title="Close">&times;</button>
+      
+      <h2 class="treat-title">Once Again Happy Birthday Sarah</h2>
+
+      <div class="treat-cake-wrapper" id="treatCakeWrapper">
+        <img src="birthday_cake_new.png" alt="Happy Birthday Sarah Cake" class="treat-cake-img" id="treatCakeImg">
+      </div>
+
+      <div class="treat-actions">
+        <button class="treat-cow-btn" id="treatMoreConfettiBtn">🐮</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full-Screen Sparkles Layer -->
+  <div class="screen-sparkles-container" id="screenSparklesContainer"></div>
+
+  <script>
+    // 6 Tailored, funny, heartwarming birthday notes for Bhains
+    const letterNotes = [
+      {
+        title: "📜 Letter #1",
+        tagline: "Written with heartfelt ink 🖋️",
+        text: "I hope this new year of your life brings you endless reasons to smile beautiful memries to look back and everything your heart has ever desired you are genuinely one of the purestt soul I have ever met. Keep doing what you’re doing these are your years and dont ever let anyone or anything change that about you that the thing that makes u diff from others ...and i am not bluffing so make the most of them  idk whay i am having a feel of a grand unc while writing this.., remains always the same bachaw 🤍",
+        imageOnly: true,
+        imageSrc: "letter_1_written.png"
+      },
+      {
+        title: "📜 Letter #2",
+        tagline: "Written with heartfelt ink 🖋️",
+        text: "and i never said that but i deeply appreciate every single thing that u did for me and u matter more than u think u do u are my top tier frind ..",
+        imageOnly: true,
+        imageSrc: "letter_2_written.png"
+      },
+      {
+        title: "📜 Letter #3",
+        tagline: "Written with heartfelt ink 🖋️",
+        text: "And I also have to say sorry sometimes I realize that I went a little too far especially with the body shaming jokes calling you bhains or you know what else I keep calling you even when you post something sometimes I make fun of your forehead or just make jokes about you there were times when I realized ke shayad main thora zyada bol gaya but I never really had the guts to say sorry for that I genuinely feel bad because I know how it feels when someone bodyshames us even if they are just joking so jo bhi ghalat bolta tha forget that part and jis jis mein tareef karta tha qky every compliment I have ever given you I genuinely meant it...",
+        imageOnly: true,
+        imageSrc: "letter_3_written.png"
+      },
+      {
+        title: "📜 Letter #4",
+        tagline: "Written with heartfelt ink 🖋️",
+        text: "And happy birthday again aur bus yehi ky tumhay allah sab buri musibto sy bachayae aur tumay kisi ki buri nazar na lagay aur tum hamesha isi trah chapar chapar krti rahoo aur tumharay braces jldi utar jayae tughay hamesha teray jaisay hi amazing loog milay aur tu khush reh hamesha ..... ♡",
+        imageOnly: true,
+        imageSrc: "letter_4_written.png"
+      }
+    ];
+
+    // Audio synthesizer for envelope unsealing and celebration
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+    try {
+      if (AudioContextClass) audioCtx = new AudioContextClass();
+    } catch(e) {}
+
+    function playTone(freq, duration, type = 'sine', delay = 0) {
+      setTimeout(() => {
+        try {
+          if (!audioCtx) return;
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + duration);
+        } catch(e) {}
+      }, delay);
+    }
+
+    // Envelope opening rustle & chime
+    function playUnsealSound() {
+      playTone(440, 0.1, 'triangle', 0);
+      playTone(554.37, 0.12, 'triangle', 80);
+      playTone(659.25, 0.18, 'sine', 160);
+      playTone(880, 0.35, 'sine', 260);
+    }
+
+    // Modal elements
+    const letterModal = document.getElementById('letterModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalTagline = document.getElementById('modalTagline');
+    const modalBody = document.getElementById('modalBody');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const modalDoneBtn = document.getElementById('modalDoneBtn');
+    const modalConfettiBtn = document.getElementById('modalConfettiBtn');
+    const backHomeBtn = document.getElementById('backHomeBtn');
+    const writtenLetterImg = document.getElementById('writtenLetterImg');
+
+    // Confetti celebration
+    function fireConfetti() {
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 90,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+      }
+    }
+
+    // Handle Letter Clicking
+    const letterCards = document.querySelectorAll('.letter-card');
+    letterCards.forEach((card) => {
+      card.addEventListener('click', () => {
+        const index = parseInt(card.getAttribute('data-letter'), 10);
+        const data = letterNotes[index];
+        if (!data) return;
+
+        // 1. Trigger Vibration on the clicked letter
+        card.classList.remove('vibrating');
+        void card.offsetWidth; // Trigger reflow
+        card.classList.add('vibrating');
+        card.classList.add('is-opened');
+
+        // 2. Play unseal sound effect
+        playUnsealSound();
+
+        // 3. Populate Modal Content & Style
+        const modalCard = document.querySelector('.letter-modal-card');
+        if (data.imageOnly) {
+          modalCard.classList.add('image-only-mode');
+          if (writtenLetterImg && data.imageSrc) {
+            writtenLetterImg.src = data.imageSrc;
+          }
+        } else {
+          modalCard.classList.remove('image-only-mode');
+        }
+
+        if (data.isWrinkled) {
+          modalCard.classList.add('wrinkled-mode');
+        } else {
+          modalCard.classList.remove('wrinkled-mode');
+        }
+
+        modalTitle.textContent = data.title;
+        modalTagline.textContent = data.tagline;
+        modalBody.innerHTML = data.text;
+
+        // 4. Show Modal after slight vibration anticipation (~260ms)
+        setTimeout(() => {
+          letterModal.classList.add('active');
+          fireConfetti();
+        }, 260);
+      });
+    });
+
+    // Close Modal functions
+    function hideModal() {
+      letterModal.classList.remove('active');
+      const modalCard = document.querySelector('.letter-modal-card');
+      if (modalCard) {
+        modalCard.classList.remove('image-only-mode');
+        modalCard.classList.remove('wrinkled-mode');
+      }
+    }
+
+    closeModalBtn.addEventListener('click', hideModal);
+    modalDoneBtn.addEventListener('click', hideModal);
+
+    // Close when clicking backdrop
+    letterModal.addEventListener('click', (e) => {
+      if (e.target === letterModal) hideModal();
+    });
+
+    // Escape key closes modals
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (letterModal.classList.contains('active')) hideModal();
+        if (treatModal.classList.contains('active')) closeTreatModal();
+      }
+    });
+
+    modalConfettiBtn.addEventListener('click', () => {
+      fireConfetti();
+      playTone(523.25, 0.2, 'triangle', 0);
+      playTone(659.25, 0.2, 'triangle', 120);
+      playTone(783.99, 0.35, 'sine', 240);
+    });
+
+    // Treat Modal & Sparkling Celebration Logic
+    const treatBtn = document.getElementById('treatBtn');
+    const treatModal = document.getElementById('treatModal');
+    const closeTreatBtn = document.getElementById('closeTreatBtn');
+    const treatMoreConfettiBtn = document.getElementById('treatMoreConfettiBtn');
+    const treatCakeWrapper = document.getElementById('treatCakeWrapper');
+    const treatSparklesContainer = document.getElementById('treatSparklesContainer');
+    let sparkleInterval = null;
+
+    function playCelebrationFanfare() {
+      playTone(523.25, 0.22, 'triangle', 0);    // C5
+      playTone(659.25, 0.22, 'triangle', 100);  // E5
+      playTone(783.99, 0.25, 'triangle', 200);  // G5
+      playTone(1046.50, 0.45, 'sine', 320);     // C6
+      playTone(1318.51, 0.55, 'sine', 440);     // E6
+    }
+
+    // Ultra-smooth, high-performance screen sparkles using DocumentFragment & GPU compositing
+    function spawnAllOverScreenSparkles(count = 42) {
+      const container = document.getElementById('screenSparklesContainer');
+      if (!container) return;
+
+      // Cap existing elements to prevent DOM bloat & ensure silky smooth 60fps
+      if (container.children.length > 70) {
+        while (container.children.length > 35) {
+          container.removeChild(container.firstChild);
+        }
+      }
+
+      const symbols = ['✨', '⭐', '🌟', '💫', '✦', '✧', '💖', '🎀', '🌸'];
+      const colors = ['#ffe600', '#ff5277', '#ffb703', '#ffffff', '#ff9ebb', '#70e000', '#00f5d4'];
+      const fragment = document.createDocumentFragment();
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+
+      for (let i = 0; i < count; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'screen-sparkle';
+        sparkle.textContent = symbols[(Math.random() * symbols.length) | 0];
+        sparkle.style.color = colors[(Math.random() * colors.length) | 0];
+
+        const startX = Math.random() * w;
+        const startY = Math.random() * h;
+        const angle = Math.random() * Math.PI * 2;
+        const dist = 60 + Math.random() * 220;
+        const sx = Math.cos(angle) * dist;
+        const sy = Math.sin(angle) * dist;
+
+        sparkle.style.left = `${startX}px`;
+        sparkle.style.top = `${startY}px`;
+        sparkle.style.setProperty('--sx', `${sx}px`);
+        sparkle.style.setProperty('--sy', `${sy}px`);
+        sparkle.style.fontSize = `${16 + Math.random() * 24}px`;
+
+        sparkle.addEventListener('animationend', () => sparkle.remove(), { once: true });
+        fragment.appendChild(sparkle);
+      }
+
+      container.appendChild(fragment);
+    }
+
+    function openTreatModal() {
+      treatModal.classList.add('active');
+      playCelebrationFanfare();
+      fireConfetti();
+      spawnAllOverScreenSparkles(45);
+      
+      // Gentle sparkling stream while open
+      if (sparkleInterval) clearInterval(sparkleInterval);
+      sparkleInterval = setInterval(() => {
+        if (treatModal.classList.contains('active')) {
+          spawnAllOverScreenSparkles(8);
+        } else {
+          clearInterval(sparkleInterval);
+        }
+      }, 700);
+    }
+
+    function closeTreatModal() {
+      treatModal.classList.remove('active');
+      if (sparkleInterval) {
+        clearInterval(sparkleInterval);
+        sparkleInterval = null;
+      }
+    }
+
+    if (treatBtn) treatBtn.addEventListener('click', openTreatModal);
+    if (closeTreatBtn) closeTreatBtn.addEventListener('click', closeTreatModal);
+    if (treatModal) {
+      treatModal.addEventListener('click', (e) => {
+        if (e.target === treatModal) closeTreatModal();
+      });
+    }
+
+    // Press Cow Button -> Smooth, instant tactile feedback & sparkles all over the screen!
+    if (treatMoreConfettiBtn) {
+      treatMoreConfettiBtn.addEventListener('click', () => {
+        // Instant hardware-accelerated bounce
+        treatMoreConfettiBtn.style.transform = 'translateY(4px) scale(0.88)';
+        setTimeout(() => {
+          treatMoreConfettiBtn.style.transform = '';
+        }, 110);
+
+        fireConfetti();
+        playCelebrationFanfare();
+        spawnAllOverScreenSparkles(45);
+      });
+    }
+
+    // Press Cake -> Instant bounce & sparkles all over the screen!
+    if (treatCakeWrapper) {
+      treatCakeWrapper.addEventListener('click', () => {
+        treatCakeWrapper.style.transform = 'scale(0.94)';
+        setTimeout(() => {
+          treatCakeWrapper.style.transform = '';
+        }, 120);
+
+        fireConfetti();
+        playTone(659.25, 0.15, 'triangle', 0);
+        playTone(880, 0.35, 'sine', 100);
+        spawnAllOverScreenSparkles(45);
+      });
+    }
+  </script>
+</body>
+</html>
